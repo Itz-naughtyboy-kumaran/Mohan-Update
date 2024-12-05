@@ -53,8 +53,70 @@
 #drone-speed-label {
   font-weight: bold;
 }
+#map {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
 
+        .info-box {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        #caution-message {
+      display: none; /* Hidden by default */
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(255, 0, 0, 0.7);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 18px;
+    }
 
+        .label {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        
+        #motorDirectionButton {
+        position: relative; /* This allows the dropdown to be positioned relative to this button */
+    }
+
+    /* Style for the dropdown menu */
+    .motor-direction-actions {
+        position: absolute;
+        top: 0;
+        left: 100%; /* Positions the dropdown to the right of the button */
+        margin-left: 10px; /* Adds some space between the button and the dropdown */
+        background-color: rgba(255, 255, 255, 0.9);
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+    }
+
+    /* Optional: Style the individual buttons within the dropdown */
+    .motor-direction-actions button {
+        display: block;
+        width: 150px;
+        padding: 10px;
+        background-color: white;
+        border: none;
+        text-align: left;
+    }
+
+    .motor-direction-actions button:hover {
+        background-color: #f0f0f0;
+    }
     </style>
   
 
@@ -68,13 +130,30 @@
                 <button onclick="startAddingWaypoints()"style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;">Add Waypoint</button>
                 <button onclick="sendMarkers()"style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;">Send Markers</button>
                 <button onclick="clearMarkers()"style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;">Clear Markers</button>
-            </div>
+      
+
+              </div>
+
             <button onclick="showModeDropdown()" style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;"><b>Flight Mode</b></button>
             <button onclick="sendCommand('rtl')"style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;"><b>RTL</b></button>
             <button onclick="getCurrentLocation()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;"><b>Location</b></button>
             <button><a href="" style="text-decoration: none; color: inherit; color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;" target="_blank"><b>Spray</b></a></button>
             <button onclick="calbrateLevel()"> Calibrate level </button>
+            <!-- Motor Direction dropdown button -->
+<button id="motorDirectionButton" onclick="toggleMotorDirectionActions()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">
+  <b>Motor Testing</b>
+</button>
+
+<!-- Dropdown menu with motor actions -->
+<div class="motor-direction-actions" id="motorDirectionActions" style="display: none;">
+  <button onclick="motorA()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">Motor A</button>
+  <button onclick="motorB()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">Motor B</button>
+  <button onclick="motorC()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">Motor C</button>
+  <button onclick="motorD()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">Motor D</button>
+</div>
+
         </div>
+        
         <div class="map" id="map">
             <div id="distanceInfo" class="distance-info"></div>
         </div>
@@ -96,7 +175,14 @@
       <div id="drone-location" style="margin-top: 10px; color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">
         <b>Current Location:</b> <span id="location-value">N/A</span>
     </div>
-    
+
+    <div id="map"></div>
+    <div class="info-box">
+        <div id="wind-speed" class="label">Wind Speed: N/A</div>
+        <div id="weather" class="label">Weather: N/A</div>
+    </div>
+    <div id="caution-message">Caution: Wind speed is above 20 km/h!</div>
+
     
     
 </body>
