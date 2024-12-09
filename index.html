@@ -28,15 +28,14 @@
   position: fixed;
   top: 50%;
   right: 0;
-  transform: translateY(-50%); /* Centers the label vertically */
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  transform: translateY(-50%); 
+  background-color: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 10px;
   font-size: 16px;
   font-family: 'Arial', sans-serif;
   border-radius: 5px;
 }
-/* Style the drone speed container to position it at the top-right corner */
 #drone-speed-container {
   position: absolute;
   top: 10px;
@@ -49,12 +48,66 @@
   font-family: 'Arial', sans-serif;
 }
 
-/* Optional styling for the drone speed label */
 #drone-speed-label {
   font-weight: bold;
 }
+#map {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
 
+.info-box {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
 
+#caution-message {
+    display: none; 
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 18px;
+}
+        
+        #motorDirectionButton {
+        position: relative;
+    }
+
+    .motor-direction-actions {
+        position: absolute;
+        top: 0;
+        left: 100%;
+        margin-left: 10px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+    }
+
+    .motor-direction-actions button {
+        display: block;
+        width: 150px;
+        padding: 10px;
+        background-color: white;
+        border: none;
+        text-align: left;
+    }
+
+    .motor-direction-actions button:hover {
+        background-color: #f0f0f0;
+    }
     </style>
   
 
@@ -63,18 +116,22 @@
             <button id="arm-disarm-button" onclick="toggleArmDisarm()"  style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;"><b>Arm</b></button>
             <button onclick="showAltitudeBox()" style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;"><b>Takeoff</b></button>
             <button onclick="sendCommand('land')"style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;"><b>Land</b></button>
-            <button id="waypointButton" onclick="toggleWaypointActions()"style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;"><b>Waypoint</b></button>
-            <div class="waypoint-actions" id="waypointActions">
-                <button onclick="startAddingWaypoints()"style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;">Add Waypoint</button>
-                <button onclick="sendMarkers()"style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;">Send Markers</button>
-                <button onclick="clearMarkers()"style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;">Clear Markers</button>
-            </div>
+            <button class="waypoint"><a href="index1.html" style="text-decoration: none; color: inherit;" target="_blank">Waypoints</a></button>
+            <button class="Radio Calibration"><a href="radio.html" style="text-decoration: none; color: inherit;" target="_blank">Radio Calibration</a></button>
             <button onclick="showModeDropdown()" style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;"><b>Flight Mode</b></button>
             <button onclick="sendCommand('rtl')"style="color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;"><b>RTL</b></button>
-            <button onclick="getCurrentLocation()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;"><b>Location</b></button>
             <button><a href="" style="text-decoration: none; color: inherit; color: rgb(11, 26, 114);font-family: 'Times New Roman', Times, serif;" target="_blank"><b>Spray</b></a></button>
             <button onclick="calbrateLevel()"> Calibrate level </button>
-        </div>
+<button id="motorDirectionButton" onclick="motor_test()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">
+  <b>Motor Testing</b></button>
+<div class="motor-direction-actions" id="motorDirectionButton" style="display: none;">
+  <button onclick="motorA()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">Motor A</button>
+  <button onclick="motorB()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">Motor B</button>
+  <button onclick="motorC()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">Motor C</button>
+  <button onclick="motorD()" style="color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">Motor D</button>
+</div>  
+</div>
+        
         <div class="map" id="map">
             <div id="distanceInfo" class="distance-info"></div>
         </div>
@@ -83,7 +140,6 @@
         <button class="alert-button"><a href="emergency-eject.html" style="text-decoration: none; color: inherit;" target="_blank">_ _ _ _</a></button>
 
         <div id="speed">Drone Speed: 0 m/s</div>
-        <!-- Add this to the body section of your HTML file -->
 <div id="drone-speed-container">
     <span id="drone-speed-label">Drone Speed: </span>
     <span id="drone-speed">0 km/h</span>
@@ -92,11 +148,15 @@
     </div>
     <div id="drone-altitude-label">
         <span>Drone Altitude: <span id="altitude-value">0 m</span></span>
-      </div>
-      <div id="drone-location" style="margin-top: 10px; color: rgb(11, 26, 114); font-family: 'Times New Roman', Times, serif;">
-        <b>Current Location:</b> <span id="location-value">N/A</span>
     </div>
-    
+
+    <div id="map"></div>
+    <div class="info-box">
+        <div id="wind-speed" class="label">Wind Speed: N/A</div>
+        <div id="weather" class="label">Weather: N/A</div>
+    </div>
+    <div id="caution-message">Caution: Wind speed is above 20 km/h!</div>
+
     
     
 </body>
